@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreDocumentationRequest;
 use App\Http\Requests\UpdateDocumentationRequest;
 use App\Models\Documentation;
+use League\CommonMark\Node\Block\Document;
 
 class DocumentationController extends Controller
 {
@@ -15,7 +16,10 @@ class DocumentationController extends Controller
      */
     public function index()
     {
-        //
+        $documentations = Documentation::all();
+        return view('documentation', [
+            'documentations' => $documentations
+        ]);
     }
 
     /**
@@ -36,7 +40,18 @@ class DocumentationController extends Controller
      */
     public function store(StoreDocumentationRequest $request)
     {
-        //
+        if ($request->file('image') != null) {
+            $image_path = "storage/" . $request->file('image')->store('images', 'public');
+        } else {
+            $image_path = 'images/no-image.jpeg';
+        }
+        Documentation::create([
+            'name' => $request->name,
+            'status' => $request->status,
+            'embed_video' => $request->embed_video ?? '-',
+            'image' => $image_path
+        ]);
+        return redirect('documentation')->with('success', 'Berhasil tambah dokumentasi!');
     }
 
     /**
@@ -70,7 +85,24 @@ class DocumentationController extends Controller
      */
     public function update(UpdateDocumentationRequest $request, Documentation $documentation)
     {
-        //
+        if ($request->file('image') != null) {
+            $image_path = "storage/" . $request->file('image')->store('images', 'public');
+            $data = [
+                'name' => $request->name,
+                'status' => $request->status,
+                'embed_video' => $request->embed_video ?? '-',
+                'image' => $image_path
+            ];
+        } else {
+            $data = [
+                'name' => $request->name,
+                'status' => $request->status,
+                'embed_video' => $request->embed_video ?? '-',
+            ];
+        }
+
+        Documentation::find($documentation->id)->update($data);
+        return redirect('documentation')->with('success', 'Berhasil ubah dokumentasi!');
     }
 
     /**
@@ -81,6 +113,7 @@ class DocumentationController extends Controller
      */
     public function destroy(Documentation $documentation)
     {
-        //
+        Documentation::destroy($documentation->id);
+        return redirect('documentation')->with('success', 'Berhasil hapus dokumentasi!');
     }
 }

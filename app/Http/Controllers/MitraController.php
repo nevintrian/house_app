@@ -15,7 +15,10 @@ class MitraController extends Controller
      */
     public function index()
     {
-        //
+        $mitras = Mitra::all();
+        return view('mitra', [
+            'mitras' => $mitras
+        ]);
     }
 
     /**
@@ -36,7 +39,17 @@ class MitraController extends Controller
      */
     public function store(StoreMitraRequest $request)
     {
-        //
+        if ($request->file('image') != null) {
+            $image_path = "storage/" . $request->file('image')->store('images', 'public');
+        } else {
+            $image_path = 'images/no-image.jpeg';
+        }
+        Mitra::create([
+            'name' => $request->name,
+            'status' => $request->status,
+            'image' => $image_path
+        ]);
+        return redirect('mitra')->with('success', 'Berhasil tambah mitra!');
     }
 
     /**
@@ -70,7 +83,22 @@ class MitraController extends Controller
      */
     public function update(UpdateMitraRequest $request, Mitra $mitra)
     {
-        //
+        if ($request->file('image') != null) {
+            $image_path = "storage/" . $request->file('image')->store('images', 'public');
+            $data = [
+                'name' => $request->name,
+                'status' => $request->status,
+                'image' => $image_path
+            ];
+        } else {
+            $data = [
+                'name' => $request->name,
+                'status' => $request->status,
+            ];
+        }
+
+        Mitra::find($mitra->id)->update($data);
+        return redirect('mitra')->with('success', 'Berhasil ubah mitra!');
     }
 
     /**
@@ -81,6 +109,7 @@ class MitraController extends Controller
      */
     public function destroy(Mitra $mitra)
     {
-        //
+        Mitra::destroy($mitra->id);
+        return redirect('mitra')->with('success', 'Berhasil hapus mitra!');
     }
 }

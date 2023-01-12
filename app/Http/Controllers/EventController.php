@@ -15,7 +15,10 @@ class EventController extends Controller
      */
     public function index()
     {
-        //
+        $events = Event::all();
+        return view('event', [
+            'events' => $events
+        ]);
     }
 
     /**
@@ -36,7 +39,19 @@ class EventController extends Controller
      */
     public function store(StoreEventRequest $request)
     {
-        //
+        if ($request->file('image') != null) {
+            $image_path = "storage/" . $request->file('image')->store('images', 'public');
+        } else {
+            $image_path = 'images/no-image.jpeg';
+        }
+        Event::create([
+            'name' => $request->name,
+            'slug' => strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->name))),
+            'description' => $request->description,
+            'status' => $request->status,
+            'image' => $image_path
+        ]);
+        return redirect('event')->with('success', 'Berhasil tambah event!');
     }
 
     /**
@@ -70,7 +85,26 @@ class EventController extends Controller
      */
     public function update(UpdateEventRequest $request, Event $event)
     {
-        //
+        if ($request->file('image') != null) {
+            $image_path = "storage/" . $request->file('image')->store('images', 'public');
+            $data = [
+                'name' => $request->name,
+                'slug' => strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->name))),
+                'description' => $request->description,
+                'status' => $request->status,
+                'image' => $image_path
+            ];
+        } else {
+            $data = [
+                'name' => $request->name,
+                'slug' => strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->name))),
+                'description' => $request->description,
+                'status' => $request->status,
+            ];
+        }
+
+        Event::find($event->id)->update($data);
+        return redirect('event')->with('success', 'Berhasil ubah acara!');
     }
 
     /**
@@ -81,6 +115,7 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
-        //
+        Event::destroy($event->id);
+        return redirect('event')->with('success', 'Berhasil hapus acara!');
     }
 }
