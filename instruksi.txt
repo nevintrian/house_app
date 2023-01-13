@@ -1,0 +1,26 @@
+instalasi
+
+langkah instalasi :
+1. install xampp, visual studio code, composer, laravel 9
+2. buka xampp, jalaknkan apache dan mysql
+3. extract file "rumah_berbagi.zip" kemudian buka dengan visual studio code
+4. buka terminal visual studio code
+5. buka localhost, buat database baru dengan nama "rumah_berbagi"
+6. ketik "php artisan migrate:fresh --seed" pada terminal
+7. ketik "php artisan serve"
+8. buka browser, ketik "localhost:8000"
+
+
+catatan :
+1. abaikan tanda petik ("")
+2. ketika komputer baru dinyalakan, jalankan langkah 7 dan 8 saja.
+
+
+akun saat login :
+1. akun admin :
+    email : admin@gmail.com
+    pass : admin123
+
+2. akun user :
+    email : user@gmail.com
+    pass : user123

@@ -14,7 +14,9 @@
             </div>
         @endif
         <div class="table-responsive">
-            <a class="btn btn-success mb-5 rounded-pill"data-toggle="modal" data-target="#tambahModal"><i class="fa fa-plus"></i> Tambah Mitra</a>
+            @if (auth()->user()->role == 'admin')
+                <a class="btn btn-success mb-5 rounded-pill"data-toggle="modal" data-target="#tambahModal"><i class="fa fa-plus"></i> Tambah Mitra</a>
+            @endif
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>

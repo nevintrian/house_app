@@ -15,11 +15,13 @@ class LoginController extends Controller
 
     public function authenticate(Request $request)
     {
-        $data = User::where('email', $request->email)->first();
-        if ($data->status == 0) {
-            return back()->with('loginError', 'Akun anda tidak aktif!');
+        $data = User::where('email', $request->email);
+        if ($data->exists()) {
+            if ($data->first()->status == 0) {
+                return back()->with('loginError', 'Akun anda tidak aktif!');
+            }
         }
-        
+
         $credential = $request->validate([
             'email' => ['required', 'email:dns'],
             'password' => ['required']

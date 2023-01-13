@@ -149,6 +149,7 @@
             const id = $(this).data('id');
             $('.id').val(id);
             $('#deleteModal').modal('show');
+            $('#form_delete').attr('action', `mitra/${id}`);
         });
     </script>
 @endsection
