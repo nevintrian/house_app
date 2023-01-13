@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\Feedback;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,7 +15,7 @@ class UserController extends Controller
     {
         $users = User::all();
         return view('user', [
-            'users' => $users
+            'users' => $users,
         ]);
     }
 
@@ -75,5 +76,11 @@ class UserController extends Controller
     {
         User::destroy($user->id);
         return redirect('user')->with('success', 'Berhasil hapus user!');
+    }
+
+    public function feedback(Request $request)
+    {
+        $data = Feedback::where('user_id', $request->user_id)->get();
+        echo json_encode($data);
     }
 }

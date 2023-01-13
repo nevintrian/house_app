@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(DocumentationSeeder::class);
         $this->call(EventSeeder::class);
         $this->call(MitraSeeder::class);
+        $this->call(FeedbackSeeder::class);
     }
 }

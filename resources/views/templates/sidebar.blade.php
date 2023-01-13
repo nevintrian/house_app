@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>CMS</title>
     <link href="templates/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
@@ -60,6 +61,13 @@
                     <i class="fas fa-fw fa-user"></i>
                     <span>Mitra</span></a>
             </li>
+            @if (auth()->user()->role == 'user')
+            <li class="nav-item  {{ Request::is('feedback') ? 'active' : '' }}">
+                <a class="nav-link" href="/feedback">
+                    <i class="fas fa-fw fa-book"></i>
+                    <span>Saran</span></a>
+            </li>
+            @endif
             @if (auth()->user()->role == 'admin')
             <li class="nav-item  {{ Request::is('user') ? 'active' : '' }}">
                 <a class="nav-link" href="/user">

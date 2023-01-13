@@ -35,6 +35,7 @@
                         <td>{{ $user->created_at }}</td>
                         <td><a class="{{ $user->status == 1 ? "btn btn-success" : "btn btn-danger" }} disabled" href="">{{ $user->status == 1 ? "Aktif" : "Non Aktif" }}</a></td>
                         <td>
+                            <a class="btn btn-warning btn-circle btn-feedback" data-toggle="modal" data-target="#feedbackModal"  data-id="{{ $user->id }}"><i class="fa fa-book"></i></a>
                             <a class="btn btn-success btn-circle btn-edit" data-toggle="modal" data-target="#editModal" data-id="{{ $user->id }}" data-name="{{ $user->name }}" data-email="{{ $user->email }}" data-status="{{ $user->status }}" data-role="{{ $user->role }}"><i class="fa fa-pen"></i></a>
                             <a class="btn btn-danger btn-circle btn-delete" data-id="{{ $user->id }}"><i class="fa fa-trash"></i></a>
                         </td>
@@ -178,11 +179,33 @@
     </div>
 </form>
 
+<form method="post">
+    @csrf
+    <div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Lihat Saran</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="data-feedback">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+    </div>
+</form>
 @endsection
 
 @section('script')
     <script>
-             $('.btn-edit').on('click', function() {
+         $('.btn-edit').on('click', function() {
             const id = $(this).data('id');
             const name = $(this).data('name');
             const email = $(this).data('email');
@@ -219,5 +242,44 @@
             $('#deleteModal').modal('show');
             $('#form_delete').attr('action', `user/${id}`);
         });
+
+        $('.btn-feedback').on('click', function() {
+            const id = $(this).data('id');
+            $('.id').val(id);
+
+            $.ajax({
+                type: 'POST',
+                url: `user_feedback`,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                Cache: false,
+                dataType: "json",
+                data: 'user_id=' + id,
+                success: function(resp) {
+                    if(resp.length == 0){
+                        $('#data-feedback').append(
+                            `<center><p>Tidak ada saran</p></center>`
+                        );
+                    }else{
+                        let count = 0;
+                        resp.forEach(element => {
+                            $('#data-feedback').append(
+                            `<div class="form-group">
+                                    <label>Saran ${++count}</label>
+                                    <textarea class="form-control" readonly>${element.content}</textarea>
+                                </div>`
+                            );
+                        });
+                    }
+
+                }
+            });
+            $('#feedbackModal').modal('show');
+        });
+
+        $('#feedbackModal').on('hidden.bs.modal', function () {
+            $('#data-feedback').empty()
+        })
     </script>
 @endsection
